@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - สุขภาพดี</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>สุขภาพดี</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">หน้าแรก</a>
+                </li>
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link active">เข้าสู่ระบบ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="calorie-calculator.html" class="nav-link">คำนวณแคลอรี่</a>
+                </li>
+                <li class="nav-item">
+                    <a href="exercise-guide.html" class="nav-link">แนะนำการออกกำลังกาย</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="login-section">
+            <div class="container">
+                <div class="login-container">
+                    <div class="login-tabs">
+                        <button class="tab-btn active" data-tab="login">เข้าสู่ระบบ</button>
+                        <button class="tab-btn" data-tab="register">สมัครสมาชิก</button>
+                    </div>
+
+                    <!-- ฟอร์มเข้าสู่ระบบ -->
+                    <div class="tab-content active" id="login">
+                        <h2>เข้าสู่ระบบ</h2>
+                        <form class="login-form" id="loginForm">
+                            <div class="form-group">
+                                <label for="loginEmail">อีเมล</label>
+                                <input type="email" id="loginEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">รหัสผ่าน</label>
+                                <input type="password" id="loginPassword" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="remember">
+                                    <span class="checkmark"></span>
+                                    จดจำฉัน
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+                        </form>
+                        <div class="form-footer">
+                            <a href="#" class="forgot-password">ลืมรหัสผ่าน?</a>
+                        </div>
+                    </div>
+
+                    <!-- ฟอร์มสมัครสมาชิก -->
+                    <div class="tab-content" id="register">
+                        <h2>สมัครสมาชิก</h2>
+                        <form class="register-form" id="registerForm">
+                            <div class="form-group">
+                                <label for="registerName">ชื่อ-นามสกุล</label>
+                                <input type="text" id="registerName" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerEmail">อีเมล</label>
+                                <input type="email" id="registerEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">รหัสผ่าน</label>
+                                <input type="password" id="registerPassword" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="agree" required>
+                                    <span class="checkmark"></span>
+                                    ฉันยอมรับ <a href="#">เงื่อนไขการใช้งาน</a> และ <a href="#">นโยบายความเป็นส่วนตัว</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">สมัครสมาชิก</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 สุขภาพดี. สงวนลิขสิทธิ์.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
