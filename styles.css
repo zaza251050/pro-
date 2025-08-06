@@ -716,4 +716,53 @@ footer {
 
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
+}
+
+/* User Info Styles */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white !important;
+}
+
+.logout-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #d32f2f;
+}
+
+/* Message Popup Styles */
+.message-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
 } 

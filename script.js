@@ -1,3 +1,60 @@
+// Message display function
+function showMessage(message, type = 'info') {
+    // ลบข้อความเก่าถ้ามี
+    const existingMessage = document.querySelector('.message-popup');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // สร้างข้อความใหม่
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message-popup ${type}`;
+    messageDiv.textContent = message;
+    
+    // เพิ่มสไตล์
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+    `;
+    
+    // สีตามประเภท
+    if (type === 'success') {
+        messageDiv.style.backgroundColor = '#4CAF50';
+    } else if (type === 'error') {
+        messageDiv.style.backgroundColor = '#f44336';
+    } else {
+        messageDiv.style.backgroundColor = '#2196F3';
+    }
+    
+    // เพิ่ม CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(messageDiv);
+    
+    // ลบข้อความหลังจาก 5 วินาที
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
+
 // Mobile Navigation
 document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.querySelector('.hamburger');
@@ -47,11 +104,40 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = formData.get('email');
             const password = formData.get('password');
             
-            if (email && password) {
-                alert('เข้าสู่ระบบสำเร็จ! (Demo)');
-            } else {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            if (!email || !password) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
             }
+            
+            // ส่งข้อมูลไปยัง backend
+            fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    // เก็บข้อมูลผู้ใช้ใน localStorage
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // เปลี่ยนไปหน้าแรกหลังจาก 2 วินาที
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            });
         });
     }
 
@@ -64,16 +150,45 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = formData.get('password');
             const confirmPassword = formData.get('confirmPassword');
             
-            if (password !== confirmPassword) {
-                alert('รหัสผ่านไม่ตรงกัน');
+            if (!name || !email || !password || !confirmPassword) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
                 return;
             }
             
-            if (name && email && password) {
-                alert('สมัครสมาชิกสำเร็จ! (Demo)');
-            } else {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            if (password !== confirmPassword) {
+                showMessage('รหัสผ่านไม่ตรงกัน', 'error');
+                return;
             }
+            
+            // ส่งข้อมูลไปยัง backend
+            fetch('register.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                    confirmPassword: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    // เปลี่ยนไปแท็บ login หลังจาก 2 วินาที
+                    setTimeout(() => {
+                        document.querySelector('[data-tab="login"]').click();
+                    }, 2000);
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            });
         });
     }
 
@@ -92,7 +207,77 @@ document.addEventListener('DOMContentLoaded', function() {
             showExerciseGuide();
         });
     }
+    
+    // ตรวจสอบสถานะการเข้าสู่ระบบ
+    checkAuthStatus();
 });
+
+// ฟังก์ชันตรวจสอบสถานะการเข้าสู่ระบบ
+function checkAuthStatus() {
+    fetch('check_auth.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                // แสดงข้อมูลผู้ใช้ใน navbar
+                updateNavbarForLoggedInUser(data.user);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking auth status:', error);
+        });
+}
+
+// ฟังก์ชันอัปเดต navbar สำหรับผู้ใช้ที่เข้าสู่ระบบแล้ว
+function updateNavbarForLoggedInUser(user) {
+    const navMenu = document.querySelector('.nav-menu');
+    if (navMenu) {
+        // เพิ่มเมนูสำหรับผู้ใช้ที่เข้าสู่ระบบแล้ว
+        const userMenuItem = document.createElement('li');
+        userMenuItem.className = 'nav-item';
+        userMenuItem.innerHTML = `
+            <span class="nav-link user-info">
+                สวัสดี, ${user.name}
+                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+            </span>
+        `;
+        
+        // เพิ่มเมนูใหม่ก่อนเมนูสุดท้าย
+        const lastItem = navMenu.lastElementChild;
+        navMenu.insertBefore(userMenuItem, lastItem);
+        
+        // ซ่อนลิงก์เข้าสู่ระบบ
+        const loginLink = navMenu.querySelector('a[href="login.html"]');
+        if (loginLink) {
+            loginLink.parentElement.style.display = 'none';
+        }
+    }
+}
+
+// ฟังก์ชันออกจากระบบ
+function logout() {
+    fetch('logout.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage(data.message, 'success');
+            // ล้างข้อมูลใน localStorage
+            localStorage.removeItem('user');
+            // รีโหลดหน้าเว็บ
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('เกิดข้อผิดพลาดในการออกจากระบบ', 'error');
+    });
+}
 
 // Calorie Calculation Functions
 function calculateCalories() {
